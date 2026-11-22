@@ -1,0 +1,167 @@
+/* ============================================================
+   五子棋 · 样式
+   ============================================================ */
+
+* { box-sizing: border-box; }
+
+body {
+  text-align: center;
+  background: #f4f4f4;
+  font-family: system-ui;
+}
+
+/* ---------------- 棋盘 ---------------- */
+
+#board {
+  position: relative;   /* 给胜利连线做定位基准 */
+  width: 484px;         /* 15 × 32px 格 + 左右各 2px 边框 */
+  height: 484px;
+  display: grid;        /* 固定 15 列 × 15 行，不会随窗口宽度换行 */
+  grid-template-columns: repeat(15, 32px);
+  grid-template-rows: repeat(15, 32px);
+  border: 2px solid #333;
+  background: #deb887;
+  margin: 20px auto;
+}
+
+.cell {
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  position: relative;
+}
+
+/* 格子里的竖线 */
+.cell::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 32px;
+  background: #333;
+  transform: translate(-50%, -50%);
+}
+
+/* 格子里的横线 */
+.cell::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 2px;
+  background: #333;
+  transform: translate(-50%, -50%);
+}
+
+/* ---------------- 棋子 ---------------- */
+
+.chess {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  z-index: 10;
+}
+
+.black { background: #222; }
+
+.white {
+  background: #fff;
+  border: 1px solid #666;
+}
+
+/* ---------------- 状态提示 ---------------- */
+
+#tip {
+  font-size: 18px;
+  margin: 10px;
+}
+
+/* 分出胜负 / 和棋时的提示文字：放大、彩色、弹一下 */
+#tip.tip-result {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #c0392b;
+  text-shadow: 0 1px 0 #ffd75e;
+  animation: tipPop 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+#tip.tip-result.draw {
+  color: #555;
+  text-shadow: none;
+}
+
+@keyframes tipPop {
+  0%   { opacity: 0; transform: scale(0.6); }
+  60%  { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ---------------- 胜利判定：五颗连子发光 ---------------- */
+
+.chess.win {
+  box-shadow: 0 0 0 2px #ffcf4d, 0 0 10px 3px rgba(255, 176, 32, 0.75);
+  animation: winPulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes winPulse {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 0 2px #ffcf4d, 0 0 8px 2px rgba(255, 176, 32, 0.55);
+  }
+  to {
+    transform: scale(1.14);
+    box-shadow: 0 0 0 3px #ffe391, 0 0 18px 6px rgba(255, 176, 32, 0.95);
+  }
+}
+
+/* ---------------- 胜利判定：贯穿五子的金色连线 ---------------- */
+
+#win-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #ffe9a3, #ffab2e, #ffe9a3);
+  box-shadow: 0 0 10px 2px rgba(255, 180, 40, 0.75);
+  transform-origin: 0 50%;
+  opacity: 0;
+  z-index: 20;
+  pointer-events: none;
+  transition: width 0.3s ease-out;
+}
+
+#win-line.show {
+  opacity: 1;
+  animation: lineGlow 1s ease-in-out infinite alternate;
+}
+
+@keyframes lineGlow {
+  from { filter: brightness(1); }
+  to   { filter: brightness(1.3); }
+}
+
+/* ---------------- 胜利判定：棋盘外圈闪两下 ---------------- */
+
+#board.win-flash {
+  animation: boardFlash 0.9s ease-out 2;
+}
+
+@keyframes boardFlash {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 190, 60, 0.9); }
+  100% { box-shadow: 0 0 0 18px rgba(255, 190, 60, 0); }
+}
+
+/* ---------------- 按钮 ---------------- */
+
+button {
+  padding: 6px 14px;
+  cursor: pointer;
+}
